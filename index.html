@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Inventory Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Pharmacy Inventory Management System</h1>
+    </header>
+    <div class="sidebar" id="sidebar" style="display: none;">
+        <button onclick="showHome()"><i class="fas fa-home"></i>Home</button>
+        <button onclick="showAddProductForm()"><i class="fas fa-plus"></i>Add Product</button>
+        <button onclick="showUpdateProductForm()"><i class="fas fa-edit"></i>Update Product</button>
+        <button onclick="showDeleteProductForm()"><i class="fas fa-trash"></i>Delete Product</button>
+        <button onclick="showCheckoutProductForm()"><i class="fas fa-shopping-cart"></i>Checkout Product</button>
+        <button onclick="viewInventory()"><i class="fas fa-boxes"></i>View Inventory</button>
+        <button onclick="showProfitLossReport()"><i class="fas fa-chart-line"></i>Sales Report</button>
+        <button onclick="logout()"><i class="fas fa-sign-out-alt"></i>Logout</button>
+    </div>
+
+    <div id="app">
+        <div class="main-content">
+            <div class="login-screen" id="loginScreen">
+                <div class="image-container" id="imageContainer"></div>
+                <div class="form-container">
+                    <div class="container" id="loginContainer">
+                        <h2>Login</h2>
+                        <input type="text" id="loginUsername" placeholder="Username">
+                        <input type="password" id="loginPassword" placeholder="Password">
+                        <button onclick="login()">Login</button>
+                        <p>Don't have an account? <a href="#" onclick="showRegister()">Register here</a></p>
+                    </div>
+
+                    <div class="container" id="registerContainer" style="display: none;">
+                        <h2>Register</h2>
+                        <input type="text" id="registerUsername" placeholder="Username">
+                        <input type="password" id="registerPassword" placeholder="Password"
+                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?&quot;:{}|<>_\-+=\\\/;'\[\]])[A-Za-z\d!@#$%^&*(),.?&quot;:{}|<>_\-+=\\\/;'\[\]]{8,15}$"
+                        title="Must contain 8-15 characters, including at least one lowercase letter, one uppercase letter, one number, and one special character" required>
+                        <button onclick="register()">Register</button>
+                        <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="inventory-container" id="inventoryContainer" style="display: none;">
+                <div id="homeContent">
+                </div>
+                <!-- Add Product Form -->
+                <div id="addProductForm" style="display: none;">
+                    <h2>Add Product</h2>
+                    <input type="text" id="addProductId" placeholder="Product ID">
+                    <input type="text" id="addProductName" placeholder="Product Name">
+                    <input type="number" id="addProductCost" placeholder="Product Cost" min="1">
+                    <input type="number" id="addProductPrice" placeholder="Price" min="1">
+                    <input type="number" id="addProductQuantity" placeholder="Quantity" min="1">
+                    <select id="addProductType">
+                        <option value="cosmetic">Cosmetic</option>
+                        <option value="medication">Medication</option>
+                        <option value="medical-supplies">Medical Supplies</option>
+                    </select>
+                    <button onclick="addProduct()">Add Product</button>
+                </div>
+
+                <!-- Update Product Form -->
+                <div id="updateProductForm" style="display: none;">
+                    <h2>Update Product</h2>
+                    <input type="text" id="updateProductId" placeholder="Product ID">
+                    <input type="text" id="updateProductName" placeholder="Product Name">
+                    <input type="number" id="updateProductCost" placeholder="Product Cost" min="1">
+                    <input type="number" id="updateProductPrice" placeholder="Price" min="1">
+                    <input type="number" id="updateProductQuantity" placeholder="Quantity" min="1">
+                    <select id="updateProductType">
+                        <option value="cosmetic">Cosmetic</option>
+                        <option value="medication">Medication</option>
+                        <option value="medical-supplies">Medical Supplies</option>
+                    </select>
+                    <button onclick="updateProduct()">Update Product</button>
+                </div>
+
+                <!-- Delete Product Form -->
+                <div id="deleteProductForm" style="display: none;">
+                    <h2>Delete Product</h2>
+                    <input type="text" id="deleteProductId" placeholder="Product Id">
+                    <button onclick="deleteProduct()">Delete Product</button>
+                </div>
+
+                <!-- Checkout Product Form -->
+                <div id="checkoutProductForm" style="display: none;">
+                    <h2>Checkout Product</h2>
+                    <select id="checkoutProductId">
+                        <!-- Options will populated dynamically via JavaScript -->
+                    </select>
+                    <input type="number" id="checkoutProductQuantity" placeholder="Quantity" min="1">
+                    <button onclick="addToCart()">Add to Cart</button>
+
+                    <div id="productDetailsContainer"></div>
+
+                    <!-- Add a container for the cart table -->
+                    <div id="cartContainer">
+                        <h3>Cart</h3>
+                        <table id="cartTable">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total Price</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cartTableBody"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3">Total:</td>
+                                    <td id="cartTotal">0</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <button onclick="checkoutCart()">Checkout Cart</button>
+                    </div>
+                </div>
+
+                <!-- View Inventory -->
+                <div id="viewInventory" class="product-list" style="display: none;">
+                    <h2>Inventory</h2>
+                    <input type="text" id="searchBar" onkeyup="searchInventory()" placeholder="Search for product name..">
+                    <table id="inventoryTable">
+                        <thead>
+                            <tr>
+                                <th>Product ID</th>
+                                <th>Product Name</th>
+                                <th>Price</th>
+                                <th>Cost</th>
+                                <th>Quantity</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Profit & Loss Report -->
+                <div id="profitLossReport" style="display: none;">
+                    <h2>Sales Report</h2>
+                    <div class="report-options">
+                        <label>
+                            <input type="radio" name="reportType" value="monthly" checked> Monthly Report
+                        </label>
+                        <label>
+                            <input type="radio" name="reportType" value="daily"> Daily Report
+                        </label>
+                    </div>
+                    <div id="monthlySelector" class="date-selector">
+                        <input type="month" id="monthPicker">
+                    </div>
+                    <div id="dailySelector" class="date-selector" style="display: none;">
+                        <input type="date" id="datePicker">
+                    </div>
+                    <button onclick="generateReport()">Generate Report</button>
+                    <div id="reportContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showHome() {
+            hideAllForms();
+            document.getElementById('inventoryContainer').style.display = 'block';
+            document.getElementById('homeContent').style.display = 'block';
+            
+            // Get the current hour and username
+            const hour = new Date().getHours();
+            const username = document.getElementById('loginUsername').value;
+
+            // Generate the appropriate greeting
+            let greeting;
+            if (hour < 12) {
+                greeting = "Good morning";
+            } else if (hour < 18) {
+                greeting = "Good afternoon";
+            } else {
+                greeting = "Good evening";
+            }
+
+            const homeContent = document.getElementById('homeContent');
+            homeContent.innerHTML = `
+                <div class="welcome-banner">
+                    <div class="welcome-icon">
+                        <i class="fas fa-mortar-pestle"></i>
+                    </div>
+                    <h1 id="welcomeText" class="welcome-text">${greeting}, ${username}! Welcome to the Pharmacy Inventory Management System</h1>
+                </div>
+                <div class="dashboard">
+                    <div class="dashboard-item" onclick="viewInventory()">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>Inventory Overview</h3>
+                        <p>View and manage your stock</p>
+                    </div>
+                    <div class="dashboard-item" onclick="showCheckoutProductForm()">
+                        <i class="fas fa-cash-register"></i>
+                        <h3>Quick Checkout</h3>
+                        <p>Process customer purchases</p>
+                    </div>
+                    <div class="dashboard-item" onclick="showAddProductForm()">
+                        <i class="fas fa-plus-circle"></i>
+                        <h3>Add New Product</h3>
+                        <p>Expand your inventory</p>
+                    </div>
+                    <div class="dashboard-item" onclick="showProfitLossReport()">
+                        <i class="fas fa-chart-pie"></i>
+                        <h3>Financial Reports</h3>
+                        <p>Analyze your business performance</p>
+                    </div>
+                </div>
+            `;
+            animateWelcomeText();
+        }
+
+        function animateWelcomeText() {
+            const welcomeText = document.getElementById('welcomeText');
+            welcomeText.style.opacity = '0';
+            welcomeText.style.transform = 'translateY(-20px)';
+            setTimeout(() => {
+                welcomeText.style.transition = 'opacity 0.5s, transform 0.5s';
+                welcomeText.style.opacity = '1';
+                welcomeText.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        function showRegister() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('registerContainer').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('registerContainer').style.display = 'none';
+            // Clear the login form
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            fetch('db.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `action=login&username=${username}&password=${password}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data.includes("Login successful")) {
+                    // Show the sidebar and inventory content
+                    document.getElementById('sidebar').style.display = 'flex';
+                    // Login is successful and hide login screen
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('inventoryContainer').style.display = 'block';
+
+                    showHome();
+                } else{
+                    alert(data);
+                }
+            });
+        }
+
+        function register() {
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value.trim();
+
+            // Regular expression to check the password requirements
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_\-+=\\\/;'\[\]])[A-Za-z\d!@#$%^&*(),.?":{}|<>_\-+=\\\/;'\[\]]{8,15}$/;
+
+            if (username === "" || password === "") {
+                alert("Username and password cannot be empty.");
+                return;
+            }
+
+            if (!passwordRegex.test(password)) {
+                alert("Password must contain 8-15 characters, including at least one lowercase letter, one uppercase letter, one number, and one special character.");
+                return;
+            }
+
+            fetch('db.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `action=register&username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                if (data.includes("User registered successfully")) {
+                    showLogin();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while registering. Please try again.');
+            });
+        }
+
+        function showInventory() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('registerContainer').style.display = 'none';
+            document.getElementById('inventoryContainer').style.display = 'flex';
+        }
+
+        function showAddProductForm() {
+            hideAllForms();
+            document.getElementById('addProductForm').style.display = 'block';
+        }
+
+        function showUpdateProductForm() {
+            hideAllForms();
+            document.getElementById('updateProductForm').style.display = 'block';
+        }
+
+        function showDeleteProductForm() {
+            hideAllForms();
+            document.getElementById('deleteProductForm').style.display = 'block';
+            
+        }
+
+        function showCheckoutProductForm() {
+            hideAllForms();
+            document.getElementById('checkoutProductForm').style.display = 'block';
+            
+
+            // Fetch product IDs and names to populate the dropdown
+            fetch('inventory.php?action=view')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('checkoutProductId');
+                    select.innerHTML = '<option value="">Select a product</option>';
+
+                    data.forEach(product => {
+                        const option = document.createElement('option');
+                        option.value = product.id;
+                        option.textContent = `${product.id} - ${product.name}`;
+                        select.appendChild(option);
+                    });
+
+                    // Add event listener to the dropdown
+                    select.addEventListener('change', () => {
+                        const selectedProductId = select.value;
+                        if (selectedProductId) {
+                            fetchAndDisplayProductDetails(selectedProductId);
+                        } else {
+                            clearProductDetails();
+                        }
+                    });
+                });
+        }
+
+        function showProfitLossReport() {
+            hideAllForms();
+            document.getElementById('profitLossReport').style.display = 'block';
+            
+            // Clear any existing content
+            const reportContainer = document.getElementById('profitLossReport');
+            reportContainer.innerHTML = '<h2>Sales Report</h2>';
+
+            // Create buttons for report type selection
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'report-type-buttons';
+            buttonContainer.innerHTML = `
+                <button id="monthlyReportBtn">Monthly Report</button>
+                <button id="dailyReportBtn">Daily Report</button>
+            `;
+            reportContainer.appendChild(buttonContainer);
+
+            // Create container for date selection
+            const dateSelectionContainer = document.createElement('div');
+            dateSelectionContainer.id = 'dateSelectionContainer';
+            reportContainer.appendChild(dateSelectionContainer);
+
+            // Add event listeners to buttons
+            document.getElementById('monthlyReportBtn').addEventListener('click', showMonthlySelector);
+            document.getElementById('dailyReportBtn').addEventListener('click', showDailySelector);
+
+            // Create container for report content
+            const reportContent = document.createElement('div');
+            reportContent.id = 'reportContent';
+            reportContainer.appendChild(reportContent);
+
+            // Add canvas for the chart
+            const chartCanvas = document.createElement('canvas');
+            chartCanvas.id = 'profitChart';
+            reportContainer.appendChild(chartCanvas);
+
+            // Show monthly selector by default
+            showMonthlySelector();
+        }
+
+        function showMonthlySelector() {
+            const dateSelectionContainer = document.getElementById('dateSelectionContainer');
+            dateSelectionContainer.innerHTML = '';
+
+            const monthPicker = document.createElement('input');
+            monthPicker.type = 'month';
+            monthPicker.id = 'monthPicker';
+            monthPicker.value = new Date().toISOString().slice(0, 7); // Set to current month
+
+            const generateBtn = document.createElement('button');
+            generateBtn.textContent = 'Generate Monthly Report';
+            generateBtn.onclick = generateMonthlyReport;
+
+            dateSelectionContainer.appendChild(monthPicker);
+            dateSelectionContainer.appendChild(generateBtn);
+
+            // Show the chart
+            const chartCanvas = document.getElementById('profitChart');
+            if (chartCanvas) {
+                chartCanvas.style.display = 'block';
+            }
+        }
+
+        function showDailySelector() {
+            const dateSelectionContainer = document.getElementById('dateSelectionContainer');
+            dateSelectionContainer.innerHTML = '';
+
+            const monthPicker = document.createElement('input');
+            monthPicker.type = 'month';
+            monthPicker.id = 'dailyMonthPicker';
+            monthPicker.value = new Date().toISOString().slice(0, 7); // Set to current month
+
+            const calendarContainer = document.createElement('div');
+            calendarContainer.id = 'calendarContainer';
+            calendarContainer.className = 'calendar';
+
+            dateSelectionContainer.appendChild(monthPicker);
+            dateSelectionContainer.appendChild(calendarContainer);
+
+            monthPicker.addEventListener('change', updateCalendar);
+            updateCalendar(); // Initial calendar creation
+
+            // Hide the chart
+            const chartCanvas = document.getElementById('profitChart');
+            if (chartCanvas) {
+                chartCanvas.style.display = 'none';
+            }
+        }
+
+        function updateCalendar() {
+            const calendarContainer = document.getElementById('calendarContainer');
+            const selectedMonth = document.getElementById('dailyMonthPicker').value;
+            const [year, month] = selectedMonth.split('-');
+            const date = new Date(year, month - 1, 1);
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const firstDayOfWeek = date.getDay();
+
+            let calendarHTML = `
+                <div class="calendar-header">
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+                <div class="calendar-body">
+            `;
+
+            // Add empty cells for days before the first day of the month
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                calendarHTML += '<div class="calendar-day empty"></div>';
+            }
+
+            // Add calendar days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateString = `${year}-${month.padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                calendarHTML += `<div class="calendar-day" onclick="generateDailyReport('${dateString}')">${day}</div>`;
+            }
+
+            calendarHTML += '</div>';
+            calendarContainer.innerHTML = calendarHTML;
+        }
+
+        function generateMonthlyReport() {
+            const selectedMonth = document.getElementById('monthPicker').value;
+            const [year, month] = selectedMonth.split('-');
+            const startDate = `${year}-${month}-01`;
+            const endDate = `${year}-${month}-${new Date(year, month, 0).getDate()}`;
+        
+            fetchAndDisplayReport(startDate, endDate, 'Monthly');
+        
+            // Fetch daily profit data for the chart
+            fetch(`inventory.php?action=getDailyProfits&startDate=${startDate}&endDate=${endDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    createProfitChart(data, month);
+                })
+                .catch(error => {
+                    console.error('Error fetching daily profits:', error);
+                });
+        }
+
+        function createProfitChart(data, month) {
+            const ctx = document.getElementById('profitChart').getContext('2d');
+            
+            // Prepare data for the chart
+            const labels = data.map(item => item.date.split('-')[2] + '/' + month); // Format as day/month
+            const profits = data.map(item => parseFloat(item.profit));
+        
+            // Destroy existing chart if it exists
+            if (window.profitChart instanceof Chart) {
+                window.profitChart.destroy();
+            }
+        
+            // Create new chart
+            window.profitChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Daily Profit (RM)',
+                        data: profits,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Profit (RM)'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateDailyReport(date) {
+            const startDate = `${date} 00:00:00`;
+            const endDate = `${date} 23:59:59`;
+            fetchAndDisplayReport(startDate, endDate, 'Daily');
+        }
+
+        function fetchAndDisplayReport(startDate, endDate, reportType) {
+             // Convert dates to the format expected by PHP script
+            const formattedStartDate = startDate.split(' ')[0];
+            const formattedEndDate = endDate.split(' ')[0];
+
+            // Fetch the sales data for the selected period
+            fetch(`inventory.php?action=getSales&startDate=${startDate}&endDate=${endDate}`)
+            .then(response => response.json())
+            .then(sales => {
+                let reportHTML = `
+                    <h3>${reportType} Sales Report</h3>
+                    <p>Period: ${startDate} to ${endDate}</p>
+                    <table id="profitLossTable">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Quantity Sold</th>
+                                <th>Total Revenue</th>
+                                <th>Total Cost</th>
+                                <th>Profit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                let totalRevenue = 0;
+                let totalCost = 0;
+                let totalProfit = 0;
+
+                sales.forEach(sale => {
+                    const revenue = sale.price * sale.quantity_sold;
+                    const cost = sale.cost * sale.quantity_sold;
+                    const profit = revenue - cost;
+
+                    totalRevenue += revenue;
+                    totalCost += cost;
+                    totalProfit += profit;
+
+                    reportHTML += `
+                        <tr>
+                            <td>${sale.product_name}</td>
+                            <td>${sale.quantity_sold}</td>
+                            <td>RM${revenue.toFixed(2)}</td>
+                            <td>RM${cost.toFixed(2)}</td>
+                            <td>RM${profit.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                reportHTML += `
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2"><strong>Totals</strong></td>
+                                <td><strong>RM${totalRevenue.toFixed(2)}</strong></td>
+                                <td><strong>RM${totalCost.toFixed(2)}</strong></td>
+                                <td><strong>RM${totalProfit.toFixed(2)}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                `;
+
+                document.getElementById('reportContent').innerHTML = reportHTML;
+            })
+            .catch(error => {
+                console.error('Error fetching sales data:', error);
+                document.getElementById('reportContent').innerHTML = '<p>Error fetching sales data. Please try again.</p>';
+            });
+        }
+
+        function hideAllForms() {
+            const forms = ['homeContent', 'addProductForm', 'updateProductForm', 'deleteProductForm', 
+            'checkoutProductForm', 'viewInventory', 'profitLossReport'];
+            forms.forEach(form => {
+                document.getElementById(form).style.display = 'none';
+            });
+        }
+
+        function addProduct() {
+            const id = document.getElementById('addProductId').value;
+            const name = document.getElementById('addProductName').value;
+            const cost = document.getElementById('addProductCost').value;
+            const price = document.getElementById('addProductPrice').value;
+            const quantity = document.getElementById('addProductQuantity').value;
+            const type = document.getElementById('addProductType').value;
+        
+            fetch(`inventory.php?action=check&id=${id}`)
+                .then(response => response.text())
+                .then(data => {
+                    if (data.trim() === 'exists') {
+                        alert(`Product with ID ${id} already exists. Please use a different ID.`);
+                    } else {
+                        // Proceed with adding the product
+                        fetch('inventory.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: `action=add&id=${id}&name=${name}&cost=${cost}&price=${price}&quantity=${quantity}&type=${type}`
+                        })
+                        .then(response => response.text())
+                        .then(data => {
+                            if (data.trim() === 'Product added successfully') {
+                                alert('Product added successfully');
+                                hideAllForms();
+                                viewInventory(); // Refresh inventory only after successful addition
+                            } else {
+                                alert('Failed to add product: ' + data);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred while adding the product');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while checking product ID');
+                });
+        }
+
+        function updateProduct() {
+            const id = document.getElementById('updateProductId').value;
+            const name = document.getElementById('updateProductName').value;
+            const cost = document.getElementById('updateProductCost').value;
+            const price = document.getElementById('updateProductPrice').value;
+            const quantity = document.getElementById('updateProductQuantity').value;
+            const type = document.getElementById('updateProductType').value;
+        
+            fetch('inventory.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `action=update&id=${id}&name=${name}&cost=${cost}&price=${price}&quantity=${quantity}&type=${type}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data.trim() === 'Product updated successfully') {
+                    alert('Product updated successfully');
+                    hideAllForms();
+                    viewInventory(); // Refresh inventory only after successful update
+                } else {
+                    alert('Failed to update product: ' + data);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating the product');
+            });
+        }
+
+        function deleteProduct() {
+            const id = document.getElementById('deleteProductId').value;
+
+            fetch('inventory.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `action=delete&id=${id}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                hideAllForms();
+                viewInventory(); // Refresh inventory after deleting a product
+            });
+        }
+
+        function viewInventory() {
+            hideAllForms();
+            document.getElementById('viewInventory').style.display = 'block';
+
+            fetch('inventory.php?action=view')
+            .then(response => response.json())
+            .then(data => {
+                const tbody = document.getElementById('inventoryTableBody');
+                tbody.innerHTML = '';
+
+                data.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>${product.price}</td>
+                        <td>${product.cost}</td>
+                        <td>${product.quantity}</td>
+                        <td>${product.type}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            });
+        }
+
+        function searchInventory() {
+            const input = document.getElementById('searchBar').value.toLowerCase();
+            const rows = document.getElementById('inventoryTableBody').getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                const name = rows[i].getElementsByTagName('td')[1].innerText.toLowerCase();
+                if (name.includes(input)) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+
+        function checkoutProduct() {
+            const id = document.getElementById('checkoutProductId').value;
+            const quantity = document.getElementById('checkoutProductQuantity').value;
+
+            fetch(`inventory.php?action=get&id=${id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(product => {
+                    if (!product) {
+                        alert(`Product with ID ${id} not found.`);
+                        return;
+                    }
+
+                    // Proceed with checkout using fetched product details
+                    fetch('inventory.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: `action=checkout&id=${id}&quantity=${quantity}`
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        console.log('Checkout response:', data);
+                        alert(data);
+                        updateInventoryTable(id, product.quantity - quantity); // Update the inventory table
+                        hideAllForms();
+                        viewInventory(); // Refresh inventory after checking out a product
+                    })
+                })
+                .catch(error => {
+                    console.error('Product fetch error:', error);
+                    alert('Error fetching product details. Please try again.');
+                });
+        }
+
+        // New function to update the inventory table
+        function updateInventoryTable(id, newQuantity) {
+            const row = document.querySelector(`#inventoryTableBody tr td:first-child:contains('${id}')`).parentNode;
+            if (row) {
+                const quantityCell = row.querySelector('td:nth-child(5)');
+                quantityCell.textContent = newQuantity;
+            }
+        }
+
+        function fetchAndDisplayProductDetails(productId) {
+            fetch(`inventory.php?action=get&id=${productId}`)
+                .then(response => response.json())
+                .then(product => {
+                    const productDetailsContainer = document.getElementById('productDetailsContainer');
+                    productDetailsContainer.innerHTML = `
+                        <h3>Product Details</h3>
+                        <table id="productDetailsTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Cost</th>
+                                    <th>Quantity</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>${product.name}</td>
+                                    <td>${product.price}</td>
+                                    <td>${product.cost}</td>
+                                    <td>${product.quantity}</td>
+                                    <td>${product.type}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <hr>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error fetching product details:', error);
+                    alert('Error fetching product details. Please try again.');
+                });
+        }
+
+        function clearProductDetails() {
+            const productDetailsContainer = document.getElementById('productDetailsContainer');
+            productDetailsContainer.innerHTML = '';
+        }
+
+        function addToCart() {
+            const productId = document.getElementById('checkoutProductId').value;
+            const quantityInput = document.getElementById('checkoutProductQuantity').value;
+
+            if (quantityInput.includes('.') || quantityInput.includes(',')) {
+                alert('Decimal quantities are not allowed. Please enter a whole number.');
+                return;
+            }
+        
+            const quantity = parseInt(quantityInput);
+
+            if (!productId || isNaN(quantity) || quantity <= 0) {
+                alert('Please select a product and enter a valid quantity.');
+                return;
+            }
+
+            fetch(`inventory.php?action=get&id=${productId}`)
+            .then(response => response.json())
+            .then(product => {
+                if (!product) {
+                    alert('Product not found.');
+                    return;
+                }
+
+                const availableQuantity = parseInt(product.quantity);
+                const cartTableBody = document.getElementById('cartTableBody');
+                const cartContainer = document.getElementById('cartContainer');
+
+                // Make sure the cart is visible
+                cartContainer.style.display = 'block';
+
+                const existingRow = Array.from(cartTableBody.rows).find(row => row.cells[0].dataset.id === productId);
+
+                if (existingRow) {
+                    const existingQuantity = parseInt(existingRow.cells[2].textContent);
+                    const newQuantity = existingQuantity + quantity;
+                    
+                    if (newQuantity > availableQuantity) {
+                        alert(`Error: Cannot add ${quantity} more units. Only ${availableQuantity - existingQuantity} units available.`);
+                        return;
+                    }
+
+                    const totalPrice = product.price * newQuantity;
+
+                    existingRow.cells[2].textContent = newQuantity;
+                    existingRow.cells[3].textContent = totalPrice.toFixed(2);
+                } else {
+                    if (quantity > availableQuantity) {
+                        alert(`Error: Only ${availableQuantity} units available in stock.`);
+                        return;
+                    }
+
+                    const row = cartTableBody.insertRow();
+                    const nameCell = row.insertCell();
+                    nameCell.textContent = product.name;
+                    nameCell.dataset.id = productId;
+                    row.insertCell().textContent = product.price;
+                    row.insertCell().textContent = quantity;
+                    row.insertCell().textContent = (product.price * quantity).toFixed(2);
+                    
+                    // Add Remove button
+                    const removeCell = row.insertCell();
+                    const removeButton = document.createElement('button');
+                    removeButton.textContent = 'Remove';
+                    removeButton.className = 'remove-button';
+                    removeButton.onclick = function() { removeFromCart(this); };
+                    removeCell.appendChild(removeButton);
+                }
+
+                // Update the cart total
+                updateCartTotal();
+
+                // Clear the quantity input field
+                document.getElementById('checkoutProductQuantity').value = '';
+            })
+            .catch(error => {
+                console.error('Error fetching product details:', error);
+                alert('Error fetching product details. Please try again.');
+            });
+        }
+        function removeFromCart(button) {
+            const row = button.closest('tr');
+            row.remove();
+
+            // Update the cart total
+            updateCartTotal();
+        }
+
+        function updateCartTotal() {
+            const cartTableBody = document.getElementById('cartTableBody');
+            const cartTotal = document.getElementById('cartTotal');
+            const cartRows = cartTableBody.rows;
+            let total = 0;
+            for (let i = 0; i < cartRows.length; i++) {
+                total += parseFloat(cartRows[i].cells[3].textContent);
+            }
+            cartTotal.textContent = total.toFixed(2);
+        }
+
+        function checkoutCart() {
+            const cartTableBody = document.getElementById('cartTableBody');
+            const cartRows = cartTableBody.rows;
+
+            if (cartRows.length === 0) {
+                alert('Your cart is empty.');
+                return;
+            }
+
+            let totalPrice = 0;
+            let totalProfit = 0;
+            let checkoutDetails = `
+                <h3>Checkout Details</h3>
+                <table id="productDetailsTable">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
+                            <th>Profit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            const productPromises = [];
+
+            for (let i = 0; i < cartRows.length; i++) {
+                const row = cartRows[i];
+                const productId = row.cells[0].dataset.id;
+                const price = parseFloat(row.cells[1].textContent);
+                const quantity = parseInt(row.cells[2].textContent);
+                const rowTotal = parseFloat(row.cells[3].textContent);
+
+                totalPrice += rowTotal;
+
+                const productPromise = fetch(`inventory.php?action=get&id=${productId}`)
+                    .then(response => response.json())
+                    .then(product => {
+                        const cost = product.cost;
+                        const profit = (price - cost) * quantity;
+                        totalProfit += profit;
+
+                        checkoutDetails += `
+                            <tr>
+                                <td>${product.name}</td>
+                                <td>${price.toFixed(2)}</td>
+                                <td>${quantity}</td>
+                                <td>${rowTotal.toFixed(2)}</td>
+                                <td>${profit.toFixed(2)}</td>
+                            </tr>
+                        `;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching product details:', error);
+                        alert('Error fetching product details. Please try again.');
+                    });
+
+                productPromises.push(productPromise);
+            }
+
+            Promise.all(productPromises)
+                .then(() => {
+                    checkoutDetails += `
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3"></td>
+                                <td><strong>Total Price: RM${totalPrice.toFixed(2)}</strong></td>
+                                <td><strong>Total Profit: RM${totalProfit.toFixed(2)}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div id="paymentBox" class="payment-box">
+                        <h4>Payment</h4>
+                        <p>Total Amount: RM${totalPrice.toFixed(2)}</p>
+                        <input type="number" id="amountPaid" placeholder="Enter amount to pay" step="0.01">
+                        <button onclick="processPayment(${totalPrice})">Process Payment</button>
+                        <button onclick="cancelPayment()">Cancel Payment</button>
+                    </div>
+                    `;
+
+                    document.getElementById('productDetailsContainer').innerHTML = checkoutDetails;
+                    document.getElementById('cartContainer').style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error during checkout:', error);
+                    alert('Error during checkout. Please try again.');
+                });
+        }
+
+        function processPayment(totalPrice) {
+            const amountPaid = parseFloat(document.getElementById('amountPaid').value);
+            
+            if (isNaN(amountPaid) || amountPaid < totalPrice) {
+                alert('Please enter a valid amount equal to or greater than the total price.');
+                return;
+            }
+
+            const change = amountPaid - totalPrice;
+
+            const paymentDetails = `
+                <h4 style="color: green;">Payment Successful!</h4>
+                <p>Total Amount: RM${totalPrice.toFixed(2)}</p>
+                <p>Amount Paid: RM${amountPaid.toFixed(2)}</p>
+                <p>Change: RM${change.toFixed(2)}</p>
+            `;
+
+            document.getElementById('paymentBox').innerHTML = paymentDetails;
+
+            // Process the checkout for each item in the cart
+            const cartTableBody = document.getElementById('cartTableBody');
+            const cartRows = cartTableBody.rows;
+
+            const checkoutPromises = [];
+
+            for (let i = 0; i < cartRows.length; i++) {
+                const row = cartRows[i];
+                const productId = row.cells[0].dataset.id;
+                const quantity = parseInt(row.cells[2].textContent);
+
+                // Send a POST request to update the product quantity in the database
+                const checkoutPromise = fetch('inventory.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `action=checkout&id=${productId}&quantity=${quantity}`
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error updating product quantity:', error);
+                });
+                checkoutPromises.push(checkoutPromise);
+            }
+
+            Promise.all(checkoutPromises)
+                .then(() => {
+                    // Set a timeout to display the receipt after 2 seconds
+                    setTimeout(() => {
+                        generateReceipt(totalPrice, amountPaid, change);
+
+                        // Clear the cart after successful payment
+                        clearCart();
+
+                        // Add a button to start a new transaction
+                        const newTransactionButton = document.createElement('button');
+                        newTransactionButton.textContent = 'Start New Transaction';
+                        newTransactionButton.onclick = startNewTransaction;
+                        document.getElementById('paymentBox').appendChild(newTransactionButton);
+                        document.getElementById('receiptContainer').appendChild(newTransactionButton);
+                    }, 2000);
+                });
+        }
+
+        function generateReceipt(totalPrice, amountPaid, change) {
+            const receiptDate = new Date().toLocaleString();
+            const cartTableBody = document.getElementById('cartTableBody');
+            const cartRows = cartTableBody.rows;
+
+            let receiptHTML = `
+                <div id="receiptContainer" class="receipt">
+                    <h2>Receipt</h2>
+                    <p><strong>Date:</strong> ${receiptDate}</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            for (let i = 0; i < cartRows.length; i++) {
+                const row = cartRows[i];
+                const item = row.cells[0].textContent;
+                const price = parseFloat(row.cells[1].textContent);
+                const quantity = parseInt(row.cells[2].textContent);
+                const total = price * quantity;
+
+                receiptHTML += `
+                    <tr>
+                        <td>${item}</td>
+                        <td>${quantity}</td>
+                        <td>RM${price.toFixed(2)}</td>
+                        <td>RM${total.toFixed(2)}</td>
+                    </tr>
+                `;
+            }
+
+            receiptHTML += `
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3"><strong>Total</strong></td>
+                                <td><strong>RM${totalPrice.toFixed(2)}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <p><strong>Amount Paid:</strong> RM${amountPaid.toFixed(2)}</p>
+                    <p><strong>Change:</strong> RM${change.toFixed(2)}</p>
+                    <p>Thank you for your purchase!</p>
+                </div>
+            `;
+
+            document.getElementById('productDetailsContainer').innerHTML = receiptHTML;
+        }
+
+        function cancelPayment() {
+        // Clear the product details container
+        document.getElementById('productDetailsContainer').innerHTML = '';
+
+        // Show the cart container
+        document.getElementById('cartContainer').style.display = 'block';
+
+        // Show the checkout product form
+        showCheckoutProductForm();
+        }
+
+        function startNewTransaction() {
+            // Clear the product details container
+            document.getElementById('productDetailsContainer').innerHTML = '';
+
+            // Show the checkout product form and cart
+            showCheckoutProductForm();
+        }
+
+        function clearCart() {
+            const cartTableBody = document.getElementById('cartTableBody');
+            const cartTotal = document.getElementById('cartTotal');
+
+            while (cartTableBody.rows.length > 0) {
+                cartTableBody.deleteRow(0);
+            }
+
+            cartTotal.textContent = '0';
+        }
+
+        function logout() {
+            fetch('db.php?action=logout')
+            .then(() => {
+                // Hide the sidebar and reset to login state
+                document.getElementById('sidebar').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('inventoryContainer').style.display = 'none';
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                
+            });
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('loginScreen').style.display = 'flex';
+            });
+        }
+    </script>
+</body>
+</html>
