@@ -1,0 +1,623 @@
+/* Keyframe Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInFromLeft {
+    from { transform: translateX(-50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInFromRight {
+    from { transform: translateX(50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes pulseGlow {
+    0% { box-shadow: 0 0 5px rgba(66, 133, 244, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(66, 133, 244, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(66, 133, 244, 0.5); }
+}
+
+
+header {
+    background-color: #555f9e;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    animation: slideInFromTop 0.5s ease-out;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+    to { text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.8); }
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    animation: fadeIn 1s ease-out;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #f0f4f8;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    height: 100%;
+    position: fixed;
+    top: 80px;
+    left: 0;
+    animation: slideInFromLeft 0.5s ease-out;
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 12px 20px;
+    background-color: transparent;
+    color: #2c3e50;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+    display: flex;
+    align-items: center;
+    border-left: 4px solid transparent;
+}
+
+.sidebar button:hover {
+    background-color: #e2e8f0;
+    color: #3498db;
+    transform: translateX(5px);
+}
+
+.sidebar button.active {
+    background-color: #e2e8f0;
+    color: #3498db;
+    border-left-color: #3498db;
+    animation: pulseGlow 2s infinite;
+}
+
+.sidebar button i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.sidebar button:hover i {
+    transform: scale(1.2);
+}
+
+.main-content {
+    display: flex;
+    flex: 1;
+    padding: 30px;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin-top: 170px;
+}
+
+.content {
+    display: flex;
+    flex: 1;
+    padding-top: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-top: -120px;
+    margin-left: 300px;
+}
+
+.login-screen {
+    display: flex;
+    width: 100%;
+    max-width: 800px;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.image-container {
+    flex: 1;
+    background-image: url('https://us.123rf.com/450wm/kinokotagawa/kinokotagawa1702/kinokotagawa170200078/71192775-illustration-that-a-businesswoman-consults-a-female-pharmacist.jpg?ver=6');
+    background-size: cover;
+    background-position: center;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    min-height: 100%;
+}
+
+.form-container {
+    flex: 1;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    max-width: 380px;
+    width: 100%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+}
+
+.container, .inventory-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    margin: 20px;
+}
+
+.container h2, .inventory-container h2 {
+    margin-top: 0;
+    text-align: center;
+    color: #8a91cd;
+}
+
+.container input, .inventory-container input, .inventory-container select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.container button, .inventory-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #a2adeb;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px #999;
+    transition: background-color 0.3s;
+}
+
+.container button:hover, .inventory-container button:hover {
+    background-color: #a5aede;
+}
+
+.container button:active, .inventory-container button:active {
+    background-color: #a2adeb;
+    box-shadow: 0 2px #9b81a7;
+    transform: translateY(2px);
+}
+
+.container p, .inventory-container p {
+    text-align: center;
+}
+
+.container p a, .inventory-container p a {
+    color: #a5aede;
+    text-decoration: none;
+}
+
+.container p a:hover, .inventory-container p a:hover {
+    text-decoration: underline;
+}
+
+.inventory-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.inventory-container .product-list {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.inventory-container .product-list table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.inventory-container .product-list table, .inventory-container .product-list th, .inventory-container .product-list td {
+    border: 1px solid #ccc;
+}
+
+.inventory-container .product-list th, .inventory-container .product-list td {
+    padding: 10px;
+    text-align: left;
+}
+
+.inventory-container .product-list tr {
+    cursor: pointer;
+}
+
+.inventory-container .product-list tr:hover {
+    background-color: #f0f0f0;
+}
+
+#productDetailsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+#productDetailsTable th, #productDetailsTable td {
+    border: 1.5px solid #000000;
+    padding: 8px;
+    text-align: left;
+}
+
+#productDetailsTable th {
+    background-color: #bcd1f4;
+    font-weight: bold;
+}
+
+#productDetailsTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.payment-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.payment-box h4 {
+    margin-top: 0;
+    color: #000000;
+}
+
+.payment-box input[type="number"] {
+    width: 96%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #000000;
+    border-radius: 4px;
+}
+
+.payment-box button {
+    background-color: #41529b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.payment-box button:hover {
+    background-color: #0056b3;
+}
+
+.remove-button {
+    padding: 5px 20px !important;
+    background-color: #000000 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 3px !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    min-width: 80px !important;
+    min-height: 30px !important;
+}
+
+.remove-button:hover {
+    background-color: #93b1f1 !important;
+}
+
+#inventoryTable {
+    width: 80%;
+    border-collapse: collapse;
+}
+
+#inventoryTable th, #inventoryTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#inventoryTable th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+#cartTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#cartTable th, #cartTable td {
+    border: 1.5px solid #000000;
+    padding: 8px;
+    text-align: left;
+}
+
+#cartTable th {
+    background-color: #bcd1f4;
+}
+
+#profitLossTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#profitLossTable th, #profitLossTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#profitLossTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+#profitLossTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#profitLossTable tfoot {
+    font-weight: bold;
+    background-color: #e9ecef;
+}
+
+.receipt {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.receipt h2 {
+    text-align: center;
+    color: #333;
+}
+
+.receipt table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.receipt th, .receipt td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.receipt th {
+    background-color: #f5f5f5;
+}
+
+.receipt tfoot td {
+    font-weight: bold;
+}
+
+.receipt p {
+    margin: 5px 0;
+}
+
+.report-options {
+    margin-bottom: 15px;
+}
+
+.report-options label {
+    margin-right: 15px;
+}
+
+.date-selector {
+    margin-bottom: 15px;
+}
+
+.date-selector input {
+    padding: 5px;
+}
+
+#profitLossReport button {
+    margin-bottom: 20px;
+}
+
+.report-type-buttons {
+    margin-bottom: 20px;
+}
+
+.report-type-buttons button {
+    margin-right: 10px;
+}
+
+.calendar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+    margin: 20px auto;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: bold;
+    background-color: #f0f0f0;
+    padding: 5px 0;
+}
+
+.calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background-color: #ddd;
+    padding: 1px;
+}
+
+.calendar-day {
+    background-color: #fff;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.calendar-day:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.1);
+}
+
+.calendar-day.empty {
+    background-color: #f9f9f9;
+}
+
+@keyframes slideInFromTop {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInFromBottom {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.welcome-banner {
+    background: linear-gradient(135deg, #3498db, #8e44ad);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    animation: slideInFromTop 0.5s ease-out;
+}
+
+#welcomeText {
+    margin: 0 0 20px 0;
+    font-size: 1.5rem;
+    color: white;
+    text-align: center;
+}
+
+.welcome-icon {
+    font-size: 3rem;
+    margin-right: 20px;
+}
+
+.welcome-text {
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+    margin-bottom: 5px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.dashboard-item {
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dashboard-item:hover {
+    background-color: rgb(228, 247, 251);
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-item i {
+    font-size: 2.5rem;
+    color: #3498db;
+    margin-bottom: 15px;
+    transition: transform 0.3s;
+}
+
+.dashboard-item:hover i {
+    transform: scale(1.2);
+}
+
+.dashboard-item h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.dashboard-item p {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dashboard-item, .stat-item {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.dashboard-item:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-item:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-item:nth-child(3) { animation-delay: 0.3s; }
+.dashboard-item:nth-child(4) { animation-delay: 0.4s; }
+
+.stat-item:nth-child(1) { animation-delay: 0.5s; }
+.stat-item:nth-child(2) { animation-delay: 0.6s; }
+.stat-item:nth-child(3) { animation-delay: 0.7s; }
+
