@@ -4,7 +4,7 @@
     $host = 'project-db.cuiufzyofhu0.us-east-1.rds.amazonaws.com';
     $user = 'main';
     $password = 'project-password';
-    $database = 'project-db';
+    $database = 'project';
 
     try {
         // Create a new PDO instance
