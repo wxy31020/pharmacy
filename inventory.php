@@ -5,10 +5,10 @@ ini_set('display_errors', 1);
 // Set the default time zone at the beginning of the script
 date_default_timezone_set('Asia/Kuala_Lumpur');
 
-$host = '127.0.0.1';
-$user = 'root';
-$password = '';
-$database = 'inventory';
+$host = 'project-db.cuiufzyofhu0.us-east-1.rds.amazonaws.com';
+$user = 'main';
+$password = 'project-password';
+$database = 'project-db';
 
 try {
     // Create a new PDO instance
