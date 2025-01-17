@@ -1,7 +1,7 @@
 <?php
     session_start();
 
-    $host = 'project-db.c3lmmtyj2ubz.us-east-1.rds.amazonaws.com';
+    $host = 'project-db.cuiufzyofhu0.us-east-1.rds.amazonaws.com';
     $user = 'main';
     $password = 'project-password';
     $database = 'project';
