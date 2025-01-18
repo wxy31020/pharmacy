@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 // Set the default time zone at the beginning of the script
 date_default_timezone_set('Asia/Kuala_Lumpur');
 
-$host = 'project-db.cl358ayraihs.us-east-1.rds.amazonaws.com';
+$host = 'project-db.cxughcaupfvg.us-east-1.rds.amazonaws.com';
 $user = 'main';
 $password = 'project-password';
 $database = 'project';
