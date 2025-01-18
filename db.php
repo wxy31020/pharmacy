@@ -8,7 +8,7 @@
 
     try {
         // Create a new PDO instance
-        $connection = new PDO("mysql:host=$host", $user, $password);
+        $connection = new PDO("mysql:host=$host;port=3306;dbname=$database", $user, $password);
         $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         // Create the database if it doesn't exist
